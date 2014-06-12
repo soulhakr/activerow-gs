@@ -151,21 +151,24 @@
             return dest;
         },
         isEqual: function(objA, objB) {
-            var objAKeys = Object.keys(objA);
-            var objBKeys = Object.keys(objB);
-            if (objAKeys.length !== objBKeys.length) {
+          var objAKeys = Object.keys(objA);
+          var objBKeys = Object.keys(objB);
+          
+          if (objAKeys.length !== objBKeys.length) {
+            return false;
+          }
+          for (var prop in objA) {
+            if (objA.hasOwnProperty(prop)) {
+              if (objB[prop] !== objA[prop]) {
                 return false;
+              }
             }
-            for (var i = 0; i < objAKeys.length; i++) {
-                if (objA[objAKeys[i]] !== objB[objAKeys[i]]) {
-                    return false;
-                }
-            }
-            return true;
+          }
+          return true;
         },
     };
     /**
-     * AR.t Exception class to issue if the sheet that is specified in the method does not exist
+     * Exception class to issue if the sheet that is specified in the method does not exist
      * @constructor
      */
     var SheetNotFoundException = function(message) {
