@@ -1,4 +1,4 @@
-/** activerow.gs */
+/** ActiveRow.gs */
 /**
  * https://github.com/soulhakr/activerow-gs
  */
@@ -51,55 +51,55 @@
     },
   };
 
-    /**
-     * RecordSet
-     * 
-     * @constructor
-     */
-    var RecordSet = function (name, option) {
-      this.name = name;
-      this.sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(name);
-      if (this.sheet === null) {
-        throw new SheetNotFoundException("Sheet: " + name + "was not found.");
-      }
-      var defaultOption = {
-        headerRowIndex: 1,
-        headerColumnStartIndex: 1,
-      };
-      if (typeof option === "undefined" || Object.keys(option).length === 0) {
+  /**
+   * RecordSet
+   * 
+   * @constructor
+   */
+  var RecordSet = function (name, option) {
+    this.name = name;
+    this.sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(name);
+    if (this.sheet === null) {
+      throw new SheetNotFoundException("Sheet: " + name + "was not found.");
+    }
+    var defaultOption = {
+      headerRowIndex: 1,
+      headerColumnStartIndex: 1,
+    };
+    if (typeof option === "undefined" || Object.keys(option).length === 0) {
 
-        this.option = defaultOption;
-      } else {
-        this.option = function (src, dest) { // extend option object
-          for (var prop in src) {
-            dest[prop] = src[prop];
-          }
-          return dest;
-        } (defaultOption, option);
-      }
-      // column setter
-      this.column = {};
-      this.inverseColumn = {};
-      var headerRow = this.sheet.getRange(this.option.headerRowIndex,
-                                          this.option.headerColumnStartIndex,
-                                          1,
-                                          this.sheet.getLastColumn()).getValues();
-      for (var i = 0; i < headerRow[0].length; i++) {
-        var that = this,
-          columnName = headerRow[0][i],
-          capitalizedColumnName = columnName.charAt(0).toUpperCase() + columnName.slice(1);
-        this.column[columnName] = i + 1;
-        this.inverseColumn[i] = columnName;
-        //findByXXX methods
-        RecordSet.prototype['findBy' + capitalizedColumnName] = function () {
-          var newColumnName = columnName.slice(0);
-          return function (data) {
-            var whereParams = {};
-            whereParams[newColumnName] = data;
-            return that.where(whereParams);
-          };
-        }();
-      }
+      this.option = defaultOption;
+    } else {
+      this.option = function (src, dest) { // extend option object
+        for (var prop in src) {
+          dest[prop] = src[prop];
+        }
+        return dest;
+      } (defaultOption, option);
+    }
+    // column setter
+    this.column = {};
+    this.inverseColumn = {};
+    var headerRow = this.sheet.getRange(this.option.headerRowIndex,
+                                        this.option.headerColumnStartIndex,
+                                        1,
+                                        this.sheet.getLastColumn()).getValues();
+    for (var i = 0; i < headerRow[0].length; i++) {
+      var that = this,
+        columnName = headerRow[0][i],
+        capitalizedColumnName = columnName.charAt(0).toUpperCase() + columnName.slice(1);
+      this.column[columnName] = i + 1;
+      this.inverseColumn[i] = columnName;
+      //findByXXX methods
+      RecordSet.prototype['findBy' + capitalizedColumnName] = function () {
+        var newColumnName = columnName.slice(0);
+        return function (data) {
+          var whereParams = {};
+          whereParams[newColumnName] = data;
+          return that.where(whereParams);
+        };
+      }();
+    }
   };
   RecordSet.prototype = {
     /**
