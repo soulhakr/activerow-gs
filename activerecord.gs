@@ -1,6 +1,6 @@
-/** ar.gs */
+/** activerecord.gs */
 /**
- * https://github.com/soulhakr/active_row
+ * https://github.com/soulhakr/activerecord-gs
  */
 (function(global) {
     /**
