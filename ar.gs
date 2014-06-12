@@ -7,7 +7,7 @@
      * Use Cases:
      *   AR.createRecordSet('Sheet 1').where({name: 'nick'});
      *   // => returns [{id: 1, name: nick, email: 'nick@example.com'}]
-     * @namespace  holds functionality related to ActiveRow 
+     * @namespace  AR holds functionality related to the ActiveRow 
      *
      */
   var AR = {
@@ -15,6 +15,7 @@
        * Returns specified google sheet name as an RecordSet object
        * @param {String} name   Sheet name
        * @param {Object] option Initialization options of recordset
+       * @returns RecordSet
        */
     createRecordSet: function (name, option) {
       if (typeof AR.recordsets === "undefined") {
@@ -52,6 +53,9 @@
    * RecordSet
    * 
    * @constructor
+   * @param {String} name  Sheet name
+   * @param {Object} option  Intialization options of recordset
+   * @throws SheetNotFoundException
    */
   var RecordSet = function (name, option) {
     this.name = name;
@@ -100,7 +104,7 @@
   RecordSet.prototype = {
     /**
      * Search recordset by ID
-     * @function
+     * @methodOf  RecordSet
      * @param   {Integer} id  the value of the ID column for the line you want to search
      * @returns {Object}
      */
@@ -111,7 +115,7 @@
     },
     /**
      * Count the number of rows in the specified recordset
-     * @function
+     * @methodOf  RecordSet
      * @param   {Object} option
      * @returns {Object}
      */
@@ -122,7 +126,7 @@
     },
     /**
      * Return an object array of the specified row
-     * @function
+     * @methodOf  RecordSet
      * @param   {Object} option
      * @returns {Object}
      */
@@ -142,7 +146,7 @@
     },
     /**
      * Look for the line with the data corresponding to the column specified
-     * @function
+     * @methodOf  RecordSet
      * @param {String} column  Column name
      * @param {String} data
      */
@@ -162,7 +166,7 @@
     },
     /**
      * Returns an object array by adding the key to the data of the row that was hit
-     * @function
+     * @methodOf  RecordSet
      * @param {Array} hitRowIndexes   Group ID of the row that was hit
      */
     _createRecordSetRows: function (hitRowIndexes) {
@@ -185,6 +189,7 @@
   };
   /**
    * Exception class to issue if the sheet that is specified in the method does not exist
+   * @class SheetNotFoundException
    * @constructor
    * @param {String}  message
    */
