@@ -184,7 +184,7 @@
         }
       }
       return result;
-  },
+    },
   };
   /**
    * Exception class to issue if the sheet that is specified in the method does not exist
