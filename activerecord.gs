@@ -99,7 +99,7 @@
             if (hitRowIndexes.length === 0) {
                 return [];
             }
-            return this._createTableObjects(hitRowIndexes);
+            return this._createRecordSetRows(hitRowIndexes);
         },
         getOption: function() {
             return this.option;
@@ -128,7 +128,7 @@
          * Returns an object array by adding the key to the data of the row that was hit
          * @param {Array} hitRowIndexes Group ID of the row that was hit
          */
-        _createTableObjects: function(hitRowIndexes) {
+        _createRecordSetRows: function(hitRowIndexes) {
             var result = [];
             for (var i = 0; i < hitRowIndexes.length; i++) {
                 var tmpResult = {},
