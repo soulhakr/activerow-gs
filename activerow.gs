@@ -1,30 +1,27 @@
-/** ActiveRow.gs */
+/** AR.gs */
 /**
- * https://github.com/soulhakr/activerow-gs
+ * https://github.com/soulhakr/AR-gs
  */
 (function (global) {
     /**
-     * ActiveRow  Underlying objects to use
-     *
      * Use Cases:
-     *   ActiveRow.createRecordSet('Sheet 1').where({name: 'nick'});
+     *   AR.createRecordSet('Sheet 1').where({name: 'nick'});
      *   // => returns [{id: 1, name: nick, email: 'nick@example.com'}]
+     * @namespace  holds functionality related to ActiveRow 
      *
      */
-  var ActiveRow = {
+  var AR = {
       /**
-       * ActiveRow
-       *
-       * returns specified google sheet name as an RecordSet object
+       * Returns specified google sheet name as an RecordSet object
        * @param {String} name   Sheet name
        * @param {Object] option Initialization options of recordset
        */
     createRecordSet: function (name, option) {
-      if (typeof ActiveRow.recordsets === "undefined") {
-        ActiveRow.recordsets = {};
+      if (typeof AR.recordsets === "undefined") {
+        AR.recordsets = {};
       }
-      if (!ActiveRow.recordsets[name]) {
-        ActiveRow.recordsets[name] = new RecordSet(name, option);
+      if (!AR.recordsets[name]) {
+        AR.recordsets[name] = new RecordSet(name, option);
       } else {
         if (typeof option !== "undefined") {
           var eq = function (objA, objB) {
@@ -41,13 +38,13 @@
               }
             }
             return true;
-          }(ActiveRow.recordsets[name].getOption(), option);
+          }(AR.recordsets[name].getOption(), option);
           if (eq) {
-            ActiveRow.recordsets[name].setOption(option);
+            AR.recordsets[name].setOption(option);
           }
         }
       }
-      return ActiveRow.recordsets[name];
+      return AR.recordsets[name];
     },
   };
 
@@ -67,7 +64,6 @@
       headerColumnStartIndex: 1,
     };
     if (typeof option === "undefined" || Object.keys(option).length === 0) {
-
       this.option = defaultOption;
     } else {
       this.option = function (src, dest) { // extend option object
@@ -90,7 +86,7 @@
         capitalizedColumnName = columnName.charAt(0).toUpperCase() + columnName.slice(1);
       this.column[columnName] = i + 1;
       this.inverseColumn[i] = columnName;
-      //findByXXX methods
+      // findByXXX methods
       RecordSet.prototype['findBy' + capitalizedColumnName] = function () {
         var newColumnName = columnName.slice(0);
         return function (data) {
@@ -104,6 +100,7 @@
   RecordSet.prototype = {
     /**
      * Search recordset by ID
+     * @function
      * @param   {Integer} id  the value of the ID column for the line you want to search
      * @returns {Object}
      */
@@ -114,6 +111,7 @@
     },
     /**
      * Count the number of rows in the specified recordset
+     * @function
      * @param   {Object} option
      * @returns {Object}
      */
@@ -123,7 +121,8 @@
       return hitRowIndexes.length;
     },
     /**
-     * option Return an object array of the specified row
+     * Return an object array of the specified row
+     * @function
      * @param   {Object} option
      * @returns {Object}
      */
@@ -142,7 +141,8 @@
       this.option = option;
     },
     /**
-     * look for the line with the data corresponding to the column specified
+     * Look for the line with the data corresponding to the column specified
+     * @function
      * @param {String} column  Column name
      * @param {String} data
      */
@@ -162,6 +162,7 @@
     },
     /**
      * Returns an object array by adding the key to the data of the row that was hit
+     * @function
      * @param {Array} hitRowIndexes   Group ID of the row that was hit
      */
     _createRecordSetRows: function (hitRowIndexes) {
@@ -191,5 +192,5 @@
     this.message = message;
     this.name = "SheetNotFoundException";
   };
-  global.ActiveRow = ActiveRow;
+  global.AR = AR;
 })(this);
