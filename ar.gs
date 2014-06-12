@@ -1,6 +1,6 @@
 /** AR.gs */
 /**
- * https://github.com/soulhakr/AR-gs
+ * https://github.com/soulhakr/activerow-gs
  */
 (function (global) {
     /**
