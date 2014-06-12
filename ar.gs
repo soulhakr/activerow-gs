@@ -4,7 +4,7 @@
  */
 (function (global) {
     /**
-     * Use Cases:
+     * Usage:
      *   AR.createRecordSet('Sheet 1').where({name: 'nick'});
      *   // => returns [{id: 1, name: nick, email: 'nick@example.com'}]
      * @namespace  AR holds functionality related to the ActiveRow 
