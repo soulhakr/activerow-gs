@@ -15,7 +15,7 @@
        * Returns specified google sheet name as an RecordSet object
        * @param {String} name   Sheet name
        * @param {Object] option Initialization options of recordset
-       * @returns RecordSet
+       * @returns {Object} RecordSet
        */
     createRecordSet: function (name, option) {
       if (typeof AR.recordsets === "undefined") {
@@ -106,7 +106,7 @@
      * Search recordset by ID
      * @methodOf  RecordSet
      * @param   {Integer} id  the value of the ID column for the line you want to search
-     * @returns {Object}
+     * @returns {Object} RecordSet
      */
     find: function (id) {
       return this.where({
@@ -116,8 +116,8 @@
     /**
      * Count the number of rows in the specified recordset
      * @methodOf  RecordSet
-     * @param   {Object} option
-     * @returns {Object}
+     * @param   {Object}  option
+     * @returns {Integer} 
      */
     count: function (option) {
       var keys = Object.keys(option),
@@ -125,10 +125,9 @@
       return hitRowIndexes.length;
     },
     /**
-     * Return an object array of the specified row
      * @methodOf  RecordSet
-     * @param   {Object} option
-     * @returns {Object}
+     * @param     {Object}  option
+     * @returns   {Array}   an object array of the specified row
      */
     where: function (option) {
       var keys = Object.keys(option),
