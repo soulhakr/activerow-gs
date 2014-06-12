@@ -1,0 +1,195 @@
+/** activerow.gs */
+/**
+ * https://github.com/soulhakr/activerow-gs
+ */
+(function (global) {
+    /**
+     * ActiveRow  Underlying objects to use
+     *
+     * Use Cases:
+     *   ActiveRow.createRecordSet('Sheet 1').where({name: 'nick'});
+     *   // => returns [{id: 1, name: nick, email: 'nick@example.com'}]
+     *
+     */
+  var ActiveRow = {
+      /**
+       * ActiveRow
+       *
+       * returns specified google sheet name as an RecordSet object
+       * @param {String} name   Sheet name
+       * @param {Object] option Initialization options of recordset
+       */
+    createRecordSet: function (name, option) {
+      if (typeof ActiveRow.recordsets === "undefined") {
+        ActiveRow.recordsets = {};
+      }
+      if (!ActiveRow.recordsets[name]) {
+        ActiveRow.recordsets[name] = new RecordSet(name, option);
+      } else {
+        if (typeof option !== "undefined") {
+          var eq = function (objA, objB) {
+            var objAKeys = Object.keys(objA);
+            var objBKeys = Object.keys(objB);
+            if (objAKeys.length !== objBKeys.length) {
+              return false;
+            }
+            for (var prop in objA) {
+              if (objA.hasOwnProperty(prop)) {
+                if (objB[prop] !== objA[prop]) {
+                  return false;
+                }
+              }
+            }
+            return true;
+          }(ActiveRow.recordsets[name].getOption(), option);
+          if (eq) {
+            ActiveRow.recordsets[name].setOption(option);
+          }
+        }
+      }
+      return ActiveRow.recordsets[name];
+    },
+  };
+
+    /**
+     * RecordSet
+     * 
+     * @constructor
+     */
+    var RecordSet = function (name, option) {
+      this.name = name;
+      this.sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(name);
+      if (this.sheet === null) {
+        throw new SheetNotFoundException("Sheet: " + name + "was not found.");
+      }
+      var defaultOption = {
+        headerRowIndex: 1,
+        headerColumnStartIndex: 1,
+      };
+      if (typeof option === "undefined" || Object.keys(option).length === 0) {
+
+        this.option = defaultOption;
+      } else {
+        this.option = function (src, dest) { // extend option object
+          for (var prop in src) {
+            dest[prop] = src[prop];
+          }
+          return dest;
+        } (defaultOption, option);
+      }
+      // column setter
+      this.column = {};
+      this.inverseColumn = {};
+      var headerRow = this.sheet.getRange(this.option.headerRowIndex,
+                                          this.option.headerColumnStartIndex,
+                                          1,
+                                          this.sheet.getLastColumn()).getValues();
+      for (var i = 0; i < headerRow[0].length; i++) {
+        var that = this,
+          columnName = headerRow[0][i],
+          capitalizedColumnName = columnName.charAt(0).toUpperCase() + columnName.slice(1);
+        this.column[columnName] = i + 1;
+        this.inverseColumn[i] = columnName;
+        //findByXXX methods
+        RecordSet.prototype['findBy' + capitalizedColumnName] = function () {
+          var newColumnName = columnName.slice(0);
+          return function (data) {
+            var whereParams = {};
+            whereParams[newColumnName] = data;
+            return that.where(whereParams);
+          };
+        }();
+      }
+  };
+  RecordSet.prototype = {
+    /**
+     * Search recordset by ID
+     * @param   {Integer} id  the value of the ID column for the line you want to search
+     * @returns {Object}
+     */
+    find: function (id) {
+      return this.where({
+          id: id
+      });
+    },
+    /**
+     * Count the number of rows in the specified recordset
+     * @param   {Object} option
+     * @returns {Object}
+     */
+    count: function (option) {
+      var keys = Object.keys(option),
+        hitRowIndexes = this._seekRows(keys[0], option[keys[0]]);
+      return hitRowIndexes.length;
+    },
+    /**
+     * option Return an object array of the specified row
+     * @param   {Object} option
+     * @returns {Object}
+     */
+    where: function (option) {
+      var keys = Object.keys(option),
+        hitRowIndexes = this._seekRows(keys[0], option[keys[0]]);
+      if (hitRowIndexes.length === 0) {
+        return [];
+      }
+      return this._createRecordSetRows(hitRowIndexes);
+    },
+    getOption: function () {
+      return this.option;
+    },
+    setOption: function (option) {
+      this.option = option;
+    },
+    /**
+     * look for the line with the data corresponding to the column specified
+     * @param {String} column  Column name
+     * @param {String} data
+     */
+    _seekRows: function (column, data) {
+      var hitRowIndexes = [],
+        columnIndex = this.column[column],
+        dataRowStartIndex = this.option.headerRowIndex + 1,
+        columnValues = this.sheet.getRange(dataRowStartIndex,
+                                           columnIndex,
+                                           this.sheet.getLastRow()).getValues();
+      for (var i = 0; i < columnValues.length; i++) {
+        if (columnValues[i][0] === data) {
+          hitRowIndexes.push(dataRowStartIndex + i);
+        }
+      }
+      return hitRowIndexes;
+    },
+    /**
+     * Returns an object array by adding the key to the data of the row that was hit
+     * @param {Array} hitRowIndexes   Group ID of the row that was hit
+     */
+    _createRecordSetRows: function (hitRowIndexes) {
+      var result = [];
+      for (var i = 0; i < hitRowIndexes.length; i++) {
+        var tmpResult = {},
+          rowValues = this.sheet.getRange(hitRowIndexes[i],
+                                          this.option.headerColumnStartIndex,
+                                          1,
+                                          this.sheet.getLastColumn()).getValues();
+        for (var j = 0; j < rowValues[0].length; j++) {
+          tmpResult[this.inverseColumn[j]] = rowValues[0][j];
+        }
+        if (Object.keys(tmpResult).length !== 0) {
+          result.push(tmpResult);
+        }
+      }
+      return result;
+  },
+  };
+  /**
+   * Exception class to issue if the sheet that is specified in the method does not exist
+   * @constructor
+   * @param {String}  message
+   */
+  var SheetNotFoundException = function (message) {
+    this.message = message;
+    this.name = "SheetNotFoundException";
+  };
+  global.ActiveRow = ActiveRow;
+})(this);
