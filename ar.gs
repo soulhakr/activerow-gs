@@ -130,12 +130,26 @@
          * @returns   {Array}   an object array of the specified row
          */
         where: function(option) {
-            var keys = Object.keys(option),
+            var result = [],
+                keys = Object.keys(option),
                 hitRowIndexes = this.getRowIndices(keys[0], option[keys[0]]);
             if (hitRowIndexes.length === 0) {
-                return [];
+                return result;
             }
-            return this._createRecordSetRows(hitRowIndexes);
+            for (var i = 0; i < hitRowIndexes.length; i++) {
+                var tmpResult = {},
+                    rowValues = this.sheet.getRange(hitRowIndexes[i],
+                        this.option.headerColumnStartIndex,
+                        1,
+                        this.sheet.getLastColumn()).getValues();
+                for (var j = 0; j < rowValues[0].length; j++) {
+                    tmpResult[this.inverseColumn[j]] = rowValues[0][j];
+                }
+                if (Object.keys(tmpResult).length !== 0) {
+                    result.push(tmpResult);
+                }
+            }
+            return result;
         },
         getOption: function() {
             return this.option;
@@ -162,28 +176,6 @@
                 }
             }
             return hitRowIndexes;
-        },
-        /**
-         * Returns an object array by adding the key to the data of the row that was hit
-         * @methodOf  RecordSet
-         * @param {Array} hitRowIndexes   Group ID of the row that was hit
-         */
-        _createRecordSetRows: function(hitRowIndexes) {
-            var result = [];
-            for (var i = 0; i < hitRowIndexes.length; i++) {
-                var tmpResult = {},
-                    rowValues = this.sheet.getRange(hitRowIndexes[i],
-                        this.option.headerColumnStartIndex,
-                        1,
-                        this.sheet.getLastColumn()).getValues();
-                for (var j = 0; j < rowValues[0].length; j++) {
-                    tmpResult[this.inverseColumn[j]] = rowValues[0][j];
-                }
-                if (Object.keys(tmpResult).length !== 0) {
-                    result.push(tmpResult);
-                }
-            }
-            return result;
         },
     };
     /**
