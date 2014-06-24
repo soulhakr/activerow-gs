@@ -27,25 +27,31 @@ var ActiveRowService = ActiveRowService || (function(app,global) {
       option.headerColumnStartIndex = 1;
     }
 
-    // if sheet name not specified, throw exception
-    if (typeof name !== "undefined") {
-      myTable.name = name;
-    } else {
-      throw {
-        name: "SheetNameUndefinedError",
-        message: "Sheet name was not specified"
-      };
-    }
-
-    // if sheet SpreadsheetApp returned null for that sheet name, throw exception
-    if (sheet !== null) {
-      myTable.sheet = sheet;
-    } else {
-      throw {
-        name: "SheetNotFoundError",
-        message: "Sheet: " + myTable.name + " was not found"
-      };
-    }
+    // if sheet is undefined or null throw error
+    if (typeof name === "undefined" || name === null) {
+      sheet = SpreadsheetApp.getActiveSheet();
+      if (sheet === null) {
+          throw {
+            name: "TableNotNamedError",
+            message: "Table name undefined."
+          };
+      } else {
+        myTable.name = name;
+      }
+    } 
+    
+    // if sheet is undefined or null throw error
+    if (typeof sheet === "undefined" || sheet === null) {
+      sheet = SpreadsheetApp.getActiveSheet();
+      if (sheet === null) {
+          throw {
+            name: "SheetNotFoundError",
+            message: "Sheet: " + name + " was not found"
+          };
+      } else {
+        myTable.sheet = sheet;
+      }
+    } 
 
     schemaCols = sheet.getRange(option.headerRowIndex, option.headerColumnStartIndex, 1, sheet.getLastColumn()).getValues();
 
