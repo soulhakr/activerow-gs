@@ -17,9 +17,17 @@ The library also provides `where`, `count`, `find` and `findByXXX` methods like 
 
 ## Installation
 
-* open script editor by clicking "Tool > Script Editor..." at toolbar in Google Spreadsheet.
-* create new file "File > New > Script File", and name it  "AR"(anything ok).
-* copied ar.gs file content to script editor.
+* Open script editor by selecting 'Tool' > 'Script Editor...' from the menu within a Google Spreadsheet or visiting http://script.google.com and selecting 'Get Started'
+* Create a new file 'File' > 'New' > 'Script File', and name it 'ar.gs' or whatever.
+* Copy the content of 'ar.gs' here into that script editor file.
+ 
+Or
+
+* Open script editor (as above)
+* Go to 'Resources' > 'Libraries'
+* Enter 'MdlhsRuqjJV-XHKG8EXlJVlR_lf47AzL3' in the 'Find a Library' field and click 'Select'
+
+
 
 After this, the script added a base object "ActiveRowService" to the Google Apps Script environment.
 
