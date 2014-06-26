@@ -1,52 +1,54 @@
-# Active Row
+# Active Row Service
 
-Active Row is Active Record library for Google Spreadsheet.
+Active Row is a library for read-only access to Google Spreadsheet in a manner like the Active Record libraries in the popular Ruby on Rails framework.
 
-It sees Google Spreadsheet items as database models like this.
+It provides a database-like `Table` models of Google Spreadsheet Sheets as this:
 
-* Sheet : Table
-* 1st row : Schema(Columns)
-* other rows : Datas
+* Sheet : table
+* Row 1 : schema (column names)
+* Rows 2+ : data
 
-The library provides `where`, `count`, `find` and `findByXXX` methods like Active Record in Ruby on Rails.
+The library also provides `where`, `count`, `find` and `findByXXX` methods like the Active Record in Ruby on Rails.
 
-**caution** : 
+**Update** :
 
-* The library can't handle multiple where keys like `{name: 'test', email: 'test at example.com }` at present.
+* The library now handles multiple `where` keys like `{name: 'test', email: 'test at example.com }` 
 
 
-## Install
+## Installation
 
 * open script editor by clicking "Tool > Script Editor..." at toolbar in Google Spreadsheet.
 * create new file "File > New > Script File", and name it  "AR"(anything ok).
 * copied ar.gs file content to script editor.
 
-After this, the script added a base object "AR" at google apps script environment.
+After this, the script added a base object "ActiveRowService" to the Google Apps Script environment.
 
 
-## How to use
+## Usage
 
-If you have spreadsheet "sheet 1" like this,
+If for example you setup spreadsheet "sheet 1" like this,
 
-id | name | email | is_activate
---- | --- | --- | ---
-1 | ryan  | ryan at example.com | true
-2 | nick  | nick at example.com | false
-3 | tom   | tom at example.com  | true
+| id | name | email | is_activate |
+| --- | ---- | ----- | ----------- |
+| 1  | ryan | ryan at example.com | true |
+| 2  | nick | nick at example.com | false |
+| 3  | tom  | tom at example.com  | true |
 
-this sample code works like this.
+then you can do the following:
 
-    AR.t('sheet 1').where({is_activate: 'true'}) 
+    var sheet = SpreadsheetApp.getActiveSheet();
+
+    ActiveRowService.getTable(sheet, 'sheet 1').where({is_activate: 'true'}) 
     // return [{id: 1, name: 'ryan', email: 'ryan at example.com'}, {id: 3, name: 'tom', email: 'tom at example.com'}]
     
-    AR.t('sheet 1').find(2)
+    ActiveRowService.getTable(sheet, 'sheet 1').find(2)
     // return [{id: 2, name: 'nick', email: 'nick at example.com'}]
     
-    AR.t('sheet 1').findByName('tom')
+    ActiveRowService.getTable(sheet, 'sheet 1').findByName('tom')
     // return [{id: 3, name: 'tom', email: 'tom at example.com'}]
 
 
-## Customize
+## Customization
 
 You can change header row index and header column start index.
 
@@ -89,14 +91,14 @@ if you have spreadsheet like this,
  
 
     // you can set header column setting at table initialization
-    AR.t('sheet 1', {headerColumnStartIndex:1, headerRowIndex: 2}).where(name: 'tom');
+    ActiveRowService.getTable('sheet 1', {headerColumnStartIndex:1, headerRowIndex: 2}).where(name: 'tom');
 
     // you can set 
 
 
 ## Contribution
 
-Patch welcome! If you have question, please ask me at github issues.
+Patches welcome! If you have any questions, please ask me at github issues.
 
 
 ## Copyright
