@@ -99,7 +99,7 @@ if you have spreadsheet like this,
  
 
     // you can set header column setting at table initialization
-    ActiveRowService.getTable('sheet 1', {headerColumnStartIndex:1, headerRowIndex: 2}).where(name: 'tom');
+    ActiveRowService.getTable(sheet, 'sheet 1', {headerColumnStartIndex:1, headerRowIndex: 2}).where(name: 'tom');
 
     // you can set 
 
